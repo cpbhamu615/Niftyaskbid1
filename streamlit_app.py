@@ -3,22 +3,21 @@ from supabase import create_client
 import pickle
 import os
 
-# 🔑 Load Supabase URL and KEY from Streamlit Secrets
+# Load from secrets
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
-
-# Supabase Client
 supabase = create_client(url, key)
 
-# Download and Load Pickle Data
+# Download from Supabase
 try:
-    response = supabase.storage.from_("niftyaskbid-data").download("live_data.pkl")
-    data = pickle.loads(response)
+    res = supabase.storage.from_("niftyaskbid-data").download("live_data.pkl")
+    data_bytes = res.read()
+    data = pickle.loads(data_bytes)
 except Exception as e:
     st.error(f"Data load error: {e}")
     st.stop()
 
-# Streamlit App UI
+# Streamlit UI
 st.set_page_config(layout="wide")
 st.title("📊 NiftyAskBid - Live Bid/Ask Tracker")
 

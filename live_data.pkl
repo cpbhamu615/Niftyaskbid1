@@ -1,19 +1,13 @@
-from supabase import create_client, Client
+import pickle
+import pandas as pd
 
-# Supabase Credentials
-url = "https://qtpwefwbcncbdgrivzla.supabase.co"   # Your Supabase URL
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0cHdlZndiY25jYmRncml2emxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4MjIzMDAsImV4cCI6MjA2ODM5ODMwMH0.GAv0sn3NFUZ7CFbF3j2BmGoU8P8FlQzdHUrX5iExlbo"   # Your Supabase Anon Key
+data = {
+    "NIFTY": {
+        "bid": pd.DataFrame({"Price": [19500, 19490], "Qty": [10, 5]}),
+        "ask": pd.DataFrame({"Price": [19510, 19520], "Qty": [15, 10]}),
+        "ltp": 19505
+    }
+}
 
-supabase: Client = create_client(url, key)
-
-# Upload live_data.pkl to Supabase Storage bucket
-with open("live_data.pkl", "rb") as f:
-    data = f.read()
-
-res = supabase.storage.from_("niftyaskbid-data").upload(
-    "live_data.pkl",  # Path in bucket
-    data,             # Binary data
-    {"content-type": "application/octet-stream", "upsert": "true"}  # Options
-)
-
-print(res)
+with open("live_data.pkl", "wb") as f:
+    pickle.dump(data, f)

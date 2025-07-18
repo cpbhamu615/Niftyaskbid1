@@ -1,21 +1,22 @@
-from supabase import create_client
 import os
+import pickle
+from supabase import create_client
 
-# Load env from local machine (Not for cloud)
-url = "https://qtpwefwbcncbdgrivzla.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+# Load Supabase credentials from environment variables
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
 
 supabase = create_client(url, key)
 
-# Upload data to storage
+# Read local live_data.pkl
 with open("live_data.pkl", "rb") as f:
     data = f.read()
 
-# Upload (create or overwrite)
+# Upload file with upsert enabled
 res = supabase.storage.from_("niftyaskbid-data").upload(
     "live_data.pkl",
     data,
     {"content-type": "application/octet-stream", "x-upsert": "true"}
 )
 
-print(res)
+print("Upload Response:", res)

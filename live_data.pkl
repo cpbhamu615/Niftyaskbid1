@@ -1,13 +1,12 @@
-import pickle
-import pandas as pd
-
-data = {
-    "NIFTY": {
-        "bid": pd.DataFrame({"Price": [19500, 19490], "Qty": [10, 5]}),
-        "ask": pd.DataFrame({"Price": [19510, 19520], "Qty": [15, 10]}),
-        "ltp": 19505
+{
+    "NIFTY25200CE": {
+        "bid": [[price, qty], ...top 20],
+        "ask": [[price, qty], ...top 20],
+        "ltp": 123.45
+    },
+    "NIFTY25150PE": {
+        "bid": [[price, qty], ...top 20],
+        "ask": [[price, qty], ...top 20],
+        "ltp": 98.76
     }
 }
-
-with open("live_data.pkl", "wb") as f:
-    pickle.dump(data, f)

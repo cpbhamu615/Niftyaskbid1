@@ -1,22 +1,31 @@
-import os
-import pickle
-from supabase import create_client
+from supabase import create_client, Client
 
-# Load Supabase credentials from environment variables
-url = os.getenv("SUPABASE_URL")
-key = os.getenv("SUPABASE_KEY")
+# Supabase Credentials
+url = "https://qtpwefwbcncbdgrivzla.supabase.co"    # Your Supabase URL
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."     # Your Supabase Anon Key
 
-supabase = create_client(url, key)
+supabase: Client = create_client(url, key)
 
-# Read local live_data.pkl
-with open("live_data.pkl", "rb") as f:
+# Upload live_data.pkl to Supabase Storage bucket
+bucket_name = "niftyaskbid-data"
+file_path = "live_data.pkl"
+
+with open(file_path, "rb") as f:
     data = f.read()
 
-# Upload file with upsert enabled
-res = supabase.storage.from_("niftyaskbid-data").upload(
-    "live_data.pkl",
-    data,
-    {"content-type": "application/octet-stream", "x-upsert": "true"}
-)
-
-print("Upload Response:", res)
+# Try to upload first (if not exists), else update
+try:
+    res = supabase.storage.from_(bucket_name).upload(
+        "live_data.pkl",  # Path in bucket
+        data,
+        {"content-type": "application/octet-stream"}
+    )
+    print("✅ Uploaded successfully")
+except Exception as e:
+    print("🔄 File exists, trying to update...")
+    res = supabase.storage.from_(bucket_name).update(
+        "live_data.pkl",
+        data,
+        {"content-type": "application/octet-stream"}
+    )
+    print("✅ Updated successfully")

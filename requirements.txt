@@ -1,5 +1,3 @@
 streamlit
-pandas
 supabase
-python-dotenv
-storage3
+smartapi-python
